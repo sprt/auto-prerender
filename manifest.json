@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+  
+  "name": "Auto Prerender",
+  "version": "0.1",
+  
+  "description": "Automatically prerender links on hover.",
+  
+  "background": {
+    "persistent": true, // TODO: set to false when done testing
+    "scripts": ["eventPage.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["script.js"]
+    }
+  ],
+  "permissions": [
+    "tabs"
+  ]
+}
