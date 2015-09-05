@@ -2,9 +2,8 @@ document.addEventListener("mouseover", function(evt) {
   var el = evt.target;
   
   // TODO: ignore links to anchors in this page
-  // TODO: ignore HTTPs
   if (el.tagName != 'A' || el.href.trim().length == 0 ||
-      el.href.startsWith("javascript:")) {
+      el.href.startsWith("https") || el.href.startsWith("javascript:")) {
     return;
   }
   
