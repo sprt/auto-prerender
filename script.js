@@ -4,12 +4,19 @@ function hasHover(el) {
   return el.parentNode.querySelector(":hover") === el;
 }
 
+function stripHash(url) {
+  var a = document.createElement("a");
+  a.href = url;
+  a.hash = "";
+  return a.href;
+}
+
 document.addEventListener("mouseover", function(evt) {
   var el = evt.target;
   
-  // TODO: ignore links to anchors in this page
   if (el.tagName != 'A' || el.href.trim().length == 0 ||
-      el.href.startsWith("https") || el.href.startsWith("javascript:")) {
+      el.href.startsWith("https") || el.href.startsWith("javascript:") ||
+      el.href == stripHash(window.location.href) + el.hash) {
     return;
   }
   
