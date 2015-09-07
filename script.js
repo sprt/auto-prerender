@@ -11,29 +11,45 @@ function stripHash(url) {
   return a.href;
 }
 
+function findParentAnchor(el) {
+  if (el.tagName == 'A') {
+    return el;
+  }
+  while (el.parentNode !== null) {
+    el = el.parentNode;
+    if (el.tagName == 'A') {
+      return el;
+    }
+  }
+  return null;
+}
+
 var lastPrerenderedURL = null;
 
 document.addEventListener("mouseover", function(evt) {
-  var el = evt.target;
+  var anchor = findParentAnchor(evt.target);
   
-  if (el.tagName != 'A' || el.href.trim().length == 0 ||
-      el.href.startsWith("https") || el.href.startsWith("javascript:") ||
-      el.href == stripHash(window.location.href) + el.hash ||
-      el.href == lastPrerenderedURL) {
+  if (anchor === null ||
+      anchor.tagName != 'A' ||
+      anchor.href.trim().length == 0 ||
+      anchor.href.startsWith("https") ||
+      anchor.href.startsWith("javascript:") ||
+      anchor.href == stripHash(window.location.href) + anchor.hash ||
+      anchor.href == lastPrerenderedURL) {
     return;
   }
   
   window.setTimeout(function() {
-    if (!hasHover(el)) {
+    if (!hasHover(anchor)) {
       return;
     }
     
     var link = document.createElement("link");
     link.rel = "prerender";
-    link.href = el.href;
+    link.href = anchor.href;
     document.head.appendChild(link);
     
-    lastPrerenderedURL = el.href;
-    console.log("Prerendering", el.href);
+    lastPrerenderedURL = anchor.href;
+    console.log("Prerendering", anchor.href);
   }, WAIT);
 });
