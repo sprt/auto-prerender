@@ -26,6 +26,9 @@ function findParentAnchor(el) {
 
 var lastPrerenderedURL = null;
 
+var prerenderLink = document.createElement("link");
+prerenderLink.rel = "prerender";
+
 document.addEventListener("mouseover", function(evt) {
   var anchor = findParentAnchor(evt.target);
   
@@ -44,12 +47,15 @@ document.addEventListener("mouseover", function(evt) {
       return;
     }
     
-    var link = document.createElement("link");
-    link.rel = "prerender";
-    link.href = anchor.href;
-    document.head.appendChild(link);
+    if (lastPrerenderedURL !== null) {
+      document.head.removeChild(prerenderLink);
+    }
+    
+    prerenderLink.href = anchor.href;
+    document.head.appendChild(prerenderLink);
     
     lastPrerenderedURL = anchor.href;
+    
     console.log("Prerendering", anchor.href);
   }, WAIT);
 });
