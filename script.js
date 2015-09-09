@@ -1,3 +1,7 @@
+if (document.visibilityState == "prerender") {
+  chrome.runtime.sendMessage({"prerendered": window.location.href});
+}
+
 var WAIT = 200; // in ms
 
 function hasHover(el) {
@@ -56,6 +60,7 @@ document.addEventListener("mouseover", function(evt) {
     
     lastPrerenderedURL = anchor.href;
     
-    console.log("Prerendering", anchor.href);
+    chrome.runtime.sendMessage({"prerendering": anchor.href});
+    console.log("Prerendering", anchor.href, tab.id);
   }, WAIT);
 });
