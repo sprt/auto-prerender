@@ -5,7 +5,7 @@ if (document.visibilityState == "prerender") {
 function onVisibilityChange() {
   // XXX: (2015-09-09) When opening a new tab, Chrome isn't firing the
   // prerender -> hidden event until when the tab is actually visible.
-  if (!(document.visibilityState in ["visible", "hidden"])) {
+  if (["visible", "hidden"].indexOf(document.visibilityState) == -1) {
     return;
   }
   chrome.runtime.sendMessage({"clicked": window.location.href});
