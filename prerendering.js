@@ -1,30 +1,9 @@
-if (document.visibilityState == "prerender") {
-  chrome.runtime.sendMessage({"prerendered": window.location.href});
-}
-
-function onLoad() {
-  if (document.visibilityState != "prerender") {
-    return;
-  }
-  chrome.runtime.sendMessage({"loaded": window.location.href});
-  window.removeEventListener("load", onLoad);
-}
-
-window.addEventListener("load", onLoad);
-
-function onVisibilityChange() {
-  // XXX: (2015-09-09) When opening a new tab, Chrome isn't firing the
-  // prerender -> hidden event until when the tab is actually visible.
-  if (["visible", "hidden"].indexOf(document.visibilityState) == -1) {
-    return;
-  }
-  chrome.runtime.sendMessage({"clicked": window.location.href});
-  document.removeEventListener("visibilitychange", onVisibilityChange);
-}
-
-document.addEventListener("visibilitychange", onVisibilityChange);
-
 var WAIT = 200; // in ms
+
+var lastPrerenderedURL = null;
+
+var prerenderLink = document.createElement("link");
+prerenderLink.rel = "prerender";
 
 function hasHover(el) {
   return el.parentNode.querySelector(":hover") === el;
@@ -49,11 +28,6 @@ function findParentAnchor(el) {
   }
   return null;
 }
-
-var lastPrerenderedURL = null;
-
-var prerenderLink = document.createElement("link");
-prerenderLink.rel = "prerender";
 
 document.addEventListener("mouseover", function(evt) {
   var anchor = findParentAnchor(evt.target);
