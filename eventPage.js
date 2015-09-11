@@ -17,25 +17,25 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendMessage) {
       break;
     
     case "prerendered":
-      tabs.forEach(function(tab, i) {
+      tabs.forEach(function(tab, i, arr) {
         if (message.payload.url === tab.url) {
-          tabs[i].prerenderedTabId = sender.tab.id;
+          arr[i].prerenderedTabId = sender.tab.id;
         }
       });
       break;
     
     case "tabLoaded":
-      tabs.forEach(function(tab, i) {
+      tabs.forEach(function(tab, i, arr) {
         if (sender.tab.id == tab.prerenderedTabId) {
-          tabs[i].loadedTime = message.payload.time;
+          arr[i].loadedTime = message.payload.time;
         }
       });
       break;
     
     case "tabNavigated":
-      tabs.forEach(function(tab, i) {
+      tabs.forEach(function(tab, i, arr) {
         if (sender.tab.id == tab.prerenderedTabId) {
-          tabs[i].navigatedTime = message.payload.time;
+          arr[i].navigatedTime = message.payload.time;
         }
       });
       break;
