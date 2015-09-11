@@ -1,31 +1,39 @@
-function onLoad() {
-  if (document.visibilityState != "prerender") {
+function onload() {
+  chrome.runtime.sendMessage({
+    type: "tabLoaded",
+    payload: {
+      url: window.location.href,
+      time: window.performance.now()
+    }
+  });
+  window.removeEventListener("load", onload);
+}
+
+window.addEventListener("load", onload);
+
+function onvisibilitychange() {
+  // NOTE: Chrome doesn't fire the `prerender` -> `hidden` event
+  // properly for background tabs.  It's fired just before `visible`
+  // event instead (which is fired properly).
+  // This means `payload.time` will be inaccurate for background tabs;
+  // it'll represent the time when the tab was first visible, instead
+  // of when it was spawned.
+  if (["hidden", "visible"].indexOf(document.visibilityState) === -1) {
     return;
   }
   chrome.runtime.sendMessage({
-    type: "loaded",
-    payload: {url: window.location.href}
+    type: "tabNavigated",
+    payload: {
+      url: window.location.href,
+      time: window.performance.now()
+    }
   });
-  window.removeEventListener("load", onLoad);
+  document.removeEventListener("visibilitychange", onvisibilitychange);
 }
 
-function onVisibilityChange() {
-  // XXX: (2015-09-09) When opening a new tab, Chrome isn't firing the
-  // prerender -> hidden event until when the tab is actually visible.
-  if (["visible", "hidden"].indexOf(document.visibilityState) == -1) {
-    return;
-  }
-  chrome.runtime.sendMessage({
-    type: "clicked",
-    payload: {url: window.location.href}
-  });
-  document.removeEventListener("visibilitychange", onVisibilityChange);
-}
+document.addEventListener("visibilitychange", onvisibilitychange);
 
-window.addEventListener("load", onLoad);
-document.addEventListener("visibilitychange", onVisibilityChange);
-
-if (document.visibilityState == "prerender") {
+if (document.visibilityState === "prerender") {
   chrome.runtime.sendMessage({
     type: "prerendered",
     payload: {url: window.location.href}

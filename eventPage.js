@@ -3,14 +3,16 @@ var tabs = [];
 chrome.privacy.network.networkPredictionEnabled.set({value: true});
 
 chrome.runtime.onMessage.addListener(function(message, sender, sendMessage) {
-  console.log("Received message", request, sender.tab);
+  console.log("Received message", message, sender.tab);
   
   switch(message.type) {
     case "prerendering":
       tabs.push({
         prerenderingTabId: sender.tab.id,
         url: message.payload.url,
-        prerenderedTabId: null
+        prerenderedTabId: null,
+        loadedTime: null,
+        navigatedTime: null
       });
       break;
     
@@ -18,14 +20,24 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendMessage) {
       tabs.forEach(function(tab, i) {
         if (message.payload.url === tab.url) {
           tabs[i].prerenderedTabId = sender.tab.id;
-          console.log("Prerendered:", url)
         }
       });
       break;
     
-    case "loaded":
-    case "clicked":
-      // ...
+    case "tabLoaded":
+      tabs.forEach(function(tab, i) {
+        if (sender.tab.id == tab.prerenderedTabId) {
+          tabs[i].loadedTime = message.payload.time;
+        }
+      });
+      break;
+    
+    case "tabNavigated":
+      tabs.forEach(function(tab, i) {
+        if (sender.tab.id == tab.prerenderedTabId) {
+          tabs[i].navigatedTime = message.payload.time;
+        }
+      });
       break;
     
     default:
