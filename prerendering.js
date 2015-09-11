@@ -17,12 +17,12 @@ function stripHash(url) {
 }
 
 function findParentAnchor(el) {
-  if (el.tagName == 'A') {
+  if (el.tagName === 'A') {
     return el;
   }
   while (el.parentNode !== null) {
     el = el.parentNode;
-    if (el.tagName == 'A') {
+    if (el.tagName === 'A') {
       return el;
     }
   }
@@ -34,11 +34,11 @@ document.addEventListener("mouseover", function(evt) {
   
   if (anchor === null ||
       anchor.tagName != 'A' ||
-      anchor.href.trim().length == 0 ||
+      anchor.href.trim().length === 0 ||
       anchor.href.startsWith("https") ||
       anchor.href.startsWith("javascript:") ||
-      anchor.href == stripHash(window.location.href) + anchor.hash ||
-      anchor.href == lastPrerenderedURL) {
+      anchor.href === stripHash(window.location.href) + anchor.hash ||
+      anchor.href === lastPrerenderedURL) {
     return;
   }
   

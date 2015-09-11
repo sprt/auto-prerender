@@ -26,7 +26,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendMessage) {
     
     case "tabLoaded":
       tabs.forEach(function(tab, i, arr) {
-        if (sender.tab.id == tab.prerenderedTabId) {
+        if (sender.tab.id === tab.prerenderedTabId) {
           arr[i].loadedTime = message.payload.time;
         }
       });
@@ -34,7 +34,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendMessage) {
     
     case "tabNavigated":
       tabs.forEach(function(tab, i, arr) {
-        if (sender.tab.id == tab.prerenderedTabId) {
+        if (sender.tab.id === tab.prerenderedTabId) {
           arr[i].navigatedTime = message.payload.time;
         }
       });
