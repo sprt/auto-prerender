@@ -2,7 +2,10 @@ function onLoad() {
   if (document.visibilityState != "prerender") {
     return;
   }
-  chrome.runtime.sendMessage({"loaded": window.location.href});
+  chrome.runtime.sendMessage({
+    type: "loaded",
+    payload: {url: window.location.href}
+  });
   window.removeEventListener("load", onLoad);
 }
 
@@ -12,7 +15,10 @@ function onVisibilityChange() {
   if (["visible", "hidden"].indexOf(document.visibilityState) == -1) {
     return;
   }
-  chrome.runtime.sendMessage({"clicked": window.location.href});
+  chrome.runtime.sendMessage({
+    type: "clicked",
+    payload: {url: window.location.href}
+  });
   document.removeEventListener("visibilitychange", onVisibilityChange);
 }
 
@@ -20,5 +26,8 @@ window.addEventListener("load", onLoad);
 document.addEventListener("visibilitychange", onVisibilityChange);
 
 if (document.visibilityState == "prerender") {
-  chrome.runtime.sendMessage({"prerendered": window.location.href});
+  chrome.runtime.sendMessage({
+    type: "prerendered",
+    payload: {url: window.location.href}
+  });
 }

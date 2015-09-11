@@ -1,24 +1,34 @@
-var prerenderingTabs = {
-  // tabId: url, ...
-};
-
-var prerenderedTabs = {
-  // tabId: url, ...
-};
+var tabs = [];
 
 chrome.privacy.network.networkPredictionEnabled.set({value: true});
 
-chrome.runtime.onMessage.addListener(function(request, sender, sendMessage) {
+chrome.runtime.onMessage.addListener(function(message, sender, sendMessage) {
   console.log("Received message", request, sender.tab);
-  if (request.prerendering !== undefined) {
-    prerenderingTabs[sender.tab.id] = request.prerendering;
-  } else if (request.prerendered !== undefined) {
-    var url = request.prerendered;
-    for (var key in prerenderingTabs) {
-      if (url == prerenderingTabs[key]) {
-        prerenderedTabs[sender.tab.id] = url;
-        console.log("Auto Prerender prerendered", url);
-      }
-    }
+  
+  switch(message.type) {
+    case "prerendering":
+      tabs.push({
+        prerenderingTabId: sender.tab.id,
+        url: message.payload.url,
+        prerenderedTabId: null
+      });
+      break;
+    
+    case "prerendered":
+      tabs.forEach(function(tab, i) {
+        if (message.payload.url === tab.url) {
+          tabs[i].prerenderedTabId = sender.tab.id;
+          console.log("Prerendered:", url)
+        }
+      });
+      break;
+    
+    case "loaded":
+    case "clicked":
+      // ...
+      break;
+    
+    default:
+      throw "Unknown message type";
   }
 });
