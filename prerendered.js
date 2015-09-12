@@ -33,6 +33,15 @@ function onvisibilitychange() {
 
 document.addEventListener("visibilitychange", onvisibilitychange);
 
+function onunload() {
+  chrome.runtime.sendMessage({
+    type: "tabUnloaded",
+    payload: {url: window.location.href}
+  });
+}
+
+window.addEventListener("unload", onunload);
+
 if (document.visibilityState === "prerender") {
   chrome.runtime.sendMessage({
     type: "prerendered",

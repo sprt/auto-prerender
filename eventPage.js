@@ -40,6 +40,14 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendMessage) {
       });
       break;
     
+    case "tabUnloaded":
+      tabs.forEach(function(tab, i, arr) {
+        if (sender.tab.id === tab.prerenderedTabId) {
+          arr.splice(i, 1);
+        }
+      });
+      break;
+    
     default:
       throw "Unknown message type";
   }
