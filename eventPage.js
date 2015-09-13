@@ -41,6 +41,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendMessage) {
       break;
     
     case "tabUnloaded":
+      // XXX: what if prerender initiated but not honored by Chrome?
       tabs.forEach(function(tab, i, arr) {
         if (sender.tab.id === tab.prerenderedTabId) {
           arr.splice(i, 1);
