@@ -8,7 +8,7 @@
   
   "background": {
     "persistent": true, // TODO: set to false when done testing
-    "scripts": ["eventPage.js"]
+    "scripts": ["Dexie.min.js", "eventPage.js"]
   },
   "content_scripts": [
     {

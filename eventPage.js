@@ -9,6 +9,12 @@ function uuid() {
   return uuid;
 }
 
+var db = new Dexie('telemetry');
+db.version(1).stores({
+  tabs: 'loadedTime, navigatedTime'
+});
+db.open();
+
 var tabs = [];
 
 chrome.privacy.network.networkPredictionEnabled.set({value: true});
@@ -19,6 +25,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendMessage) {
   switch(message.type) {
     case "tabPrerendering":
       var id = uuid();
+      
       tabs.push({
         id: id,
         prerenderingTabId: sender.tab.id,
@@ -27,13 +34,22 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendMessage) {
         loadedTime: null,
         navigatedTime: null
       });
+      
       window.setTimeout(function() {
         tabs.forEach(function(tab, i, arr) {
-          if (tab.id === id) {
-            arr.splice(i, 1);
+          if (tab.id !== id) {
+            return;
           }
+          if (tab.prerenderedTabId !== null) {
+            db.tabs.add({
+              loadedTime: tab.loadedTime,
+              navigatedTime: tab.navigatedTime
+            });
+          }
+          arr.splice(i, 1);
         });
       }, 60000);
+      
       break;
     
     case "tabPrerendered":
