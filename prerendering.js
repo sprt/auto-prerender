@@ -57,7 +57,7 @@ document.addEventListener("mouseover", function(evt) {
     lastPrerenderedURL = anchor.href;
     
     chrome.runtime.sendMessage({
-      type: "prerendering",
+      type: "tabPrerendering",
       payload: {url: anchor.href}
     });
     
